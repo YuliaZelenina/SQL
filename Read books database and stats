@@ -1,0 +1,29 @@
+--create a read books table
+CREATE TABLE books (id integer primary key, name text, author text, rating real, genre text);
+
+--insert values into a table
+INSERT INTO books values (1, 'the house across the street', 'Katherine center', 4.5, 'thriller'),
+(2, 'meet me halfway', 'Lilian T James', 3.5, 'romance'), 
+(3, 'how to fake it  in hollywood', 'ava wilder', 4.25, 'romance'), 
+(4, 'the bodyguard', 'Katherine center', 5, 'romance'), 
+(5, 'from fan to forever', 'kate stayman-london', 4.75, 'romance'),
+(6, 'a lady for a duke', 'alexis hall', 4.75, 'romance'),
+(7, 'spoiler alert', 'olivia dade', 4, 'romance'),
+(8, 'the wedding crasher', 'mia sosa', 4, 'romance'),
+(9, 'choose me', 'kate stayman-london', 4.5, 'romance'),
+(10, 'before the coffee gets cold', 't', 4.5, 'magical realism'),
+(11, 'read between the lines', 'rachel lacey', 4, 'romance'),
+(12, 'love lettering', 'kate clayborn', 3, 'romance'),
+(13, 'the magic between', 'Katherine center', 4, 'romance'),
+(14, 'impact', 'kate stayman-london', 4.25, 'romance'),
+(15, 'mr wrong number', 'lynn painter', 3.75, 'romance');
+
+--display the table ordered by name
+select name, genre
+from books
+order by name;
+
+--the average rating for each genre ordered by genre
+select genre, avg(rating) from books
+group by genre
+order by genre
