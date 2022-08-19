@@ -1,3 +1,4 @@
+--Solar system objects analysis
 --creating and inserting information of solar system objects into a table 
 CREATE TABLE solar_system_objects(
   body TEXT
