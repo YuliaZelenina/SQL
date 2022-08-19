@@ -1,3 +1,4 @@
+--Analysis of read books
 --create a read books table
 CREATE TABLE books (id integer primary key, name text, author text, rating real, genre text);
 
