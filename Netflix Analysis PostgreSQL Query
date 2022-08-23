@@ -1,0 +1,34 @@
+--In this SQL code, I'm querying a database that's holding Nexflix data to answer questions about the data. 
+
+--Query (PostgreSQL)
+
+--#1 1. How many movie titles are there in the database? 
+SELECT count(title)
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" nti
+WHERE type = 'Movie'
+
+--#2 When was the most recent batch of tv shows and/or movies added to the database?
+
+SELECT type, max(date(date_added))
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" nti
+GROUP BY type
+
+--#3 All the movies and tv shows in alphabetical order.
+SELECT title, type
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" nti
+ORDER BY 1 asc
+
+--#4 Who was the Director for the movie Bright Star?
+SELECT np.director, nti.title
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" nti
+LEFT JOIN "CharlotteChaze/BreakIntoTech"."netflix_people" np
+ON nti.show_id = np.show_id
+WHERE title = 'Bright Star'
+
+
+--#5 what is the oldest movie in a database and what yeat was it made?
+SELECT title, release_year
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" nti
+WHERE type = 'Movie'
+ORDER BY release_year ASC
+LIMIT 1
