@@ -1,0 +1,36 @@
+--The data was downloaded from Kaggle
+--Then I created a table to which I imported the data
+--And performed analytics on the data using SQL
+
+--#1 what's the popularity of each track from greatest to smallest
+SELECT popularity, track_name, artist_name
+FROM BIT_DB.Spotifydata
+ORDER BY 1 desc;
+
+
+--#2 What artist has more than 1 popular song
+SELECT DISTINCT artist_name, count(track_name) as popular_songs
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+HAVING popular_songs > 1
+ORDER BY 2 desc;
+
+
+--#3 What is the average danceability by artist?
+SELECT DISTINCT artist_name, round(avg(danceability), 3) as avg
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY 1 ASC;
+
+
+--#4 Who are the top 10 artists based on popularity?
+SELECT DISTINCT artist_name, max(popularity) as popularity
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY 2 desc
+LIMIT 10;
+
+
+--#5 What artist released the longest song?
+SELECT DISTINCT artist_name, max(duration_ms) as max_duration
+FROM BIT_DB.Spotifydata;
