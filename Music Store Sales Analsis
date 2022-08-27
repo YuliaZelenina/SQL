@@ -1,0 +1,159 @@
+--I did an in-depth analysis of Music store data base
+
+
+--#1 What was the revenue in each month
+SELECT DISTINCT strftime('%m.%Y', InvoiceDate) AS month,
+                round(sum(Total), 2) AS revenue
+FROM invoices 
+GROUP BY month
+ORDER BY strftime('%Y', InvoiceDate);
+
+--#2 How many tracks of each genre was purchased each year
+SELECT DISTINCT strftime('%Y', i.InvoiceDate) as year, 
+                g.Name, 
+                count(ii.Quantity)           
+FROM invoice_items ii
+JOIN tracks t
+ON ii.TrackId = t.TrackId
+JOIN genres g
+ON t.GenreId = g.GenreId
+JOIN invoices i
+ON ii.InvoiceId = i.InvoiceId
+GROUP BY year, g.Name;
+
+
+--#3 Customers who are not in the US
+SELECT CustomerId, 
+       FirstName || ' ' || LastName as full_name, 
+       country
+FROM customers
+WHERE country <> 'USA';
+
+
+--#4 Show only the Customers from Brazil and how much money they spent
+SELECT c.CustomerId, 
+       FirstName || ' ' || LastName as full_name, 
+       sum(Total) AS Total, 
+       country
+FROM customers c
+LEFT JOIN invoices i
+ON c.CustomerId = i.CustomerId 
+WHERE country = 'Brazil'
+GROUP BY full_name;
+
+
+--#5 The Invoices of customers who are from Brazil. 
+--The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country
+SELECT FirstName || ' ' || LastName as full_name, 
+       InvoiceId, 
+       InvoiceDate, 
+       Country
+FROM customers c
+JOIN invoices i
+ON c.CustomerId = i.CustomerId
+WHERE c.country = 'Brazil';
+
+
+--#6 The Employees who are Sales Agents.
+SELECT FirstName || ' ' || LastName as full_name
+FROM employees
+WHERE Title = 'Sales Manager';
+
+
+--#7 Find a unique/distinct list of billing countries from the Invoice table.
+SELECT DISTINCT BillingCountry
+FROM invoices;
+
+
+--#8 The invoices associated with each sales agent. 
+--The resulting table should include the Sales Agent's full name.
+SELECT i.InvoiceId, 
+       e.FirstName || ' ' || e.LastName as full_name
+FROM invoices i
+JOIN customers c
+ON i.CustomerId = c.CustomerId
+JOIN employees e
+ON c.SupportRepId = e.EmployeeId;
+
+
+--#9 How many Invoices were there in 2009?
+SELECT count(InvoiceId)
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009';
+
+
+--#10 What are the total sales for 2009?
+SELECT round(sum(Total), 2)
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009';
+
+
+--#11 Write a query that includes the purchased track name with each invoice line item.
+SELECT ii.InvoiceLineId, 
+       t.Name
+FROM invoice_items ii
+JOIN tracks t
+ON ii.TrackId = t.TrackId;
+
+
+--#12 Write a query that includes the purchased track name with each invoice line item and a composer.
+SELECT ii.InvoiceLineId, 
+       t.Name, 
+       t.Composer
+FROM invoice_items ii
+JOIN tracks t
+ON ii.TrackId = t.TrackId;
+
+
+--#13 Write a query that includes the purchased track name 
+--AND artist name with each invoice line item.
+SELECT ii.InvoiceLineId, 
+       t.Name AS track, 
+       artists.Name AS artist
+FROM invoice_items ii
+JOIN tracks t
+ON ii.TrackId = t.TrackId
+LEFT JOIN albums 
+ON t.AlbumId = albums.AlbumId
+JOIN artists 
+ON albums.ArtistId = artists.ArtistId;
+
+
+--#14 Provide a query that shows all the Tracks, 
+--and include the Album name, Media type, and Genre.
+SELECT t.Name AS Track, 
+       a.Title AS Album, 
+       mt.Name AS Media_Type, 
+       g.Name AS Genre
+FROM tracks t
+JOIN albums a
+ON t.AlbumId = a.AlbumId
+JOIN media_types mt
+ON t.MediaTypeId = mt.MediaTypeId
+JOIN Genres g
+ON t.GenreId = g.GenreId;
+
+
+--#15 Total sales made by each sales agent.
+SELECT e.FirstName || ' ' || e.LastName as full_name, 
+       round(sum(Total), 2) AS Total_sales
+FROM invoices i
+JOIN customers c
+ON i.CustomerId = c.CustomerId
+JOIN employees e
+ON c.SupportRepId = e.EmployeeId
+GROUP BY full_name;
+
+
+--#16 Which sales agent made the most in sales in 2009? 
+SELECT e.FirstName || ' ' || e.LastName as full_name, 
+       round(sum(Total), 2) AS Total_sales
+FROM invoices i
+JOIN customers c
+ON i.CustomerId = c.CustomerId
+JOIN employees e
+ON c.SupportRepId = e.EmployeeId
+WHERE strftime('%Y', InvoiceDate) = '2009'
+GROUP BY full_name
+ORDER BY Total_sales DESC
+LIMIT 1;
