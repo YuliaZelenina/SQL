@@ -1,0 +1,44 @@
+Calculating Active cliets' Participation Rate in different types of featues.
+
+SELECT au.Date,
+	   'Battle' AS Category,
+	   CONVERT(DECIMAL(10,2),(SELECT COUNT(DISTINCT UserID) FROM Battle2 WHERE CAST(Time as date) = au.Date) *1.0
+	   / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date)) AS Total,
+	   
+	   lt.Name AS Subcategory,
+	   CONVERT(DECIMAL(10,2),COUNT(DISTINCT b.UserID) * 1.0 / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date))
+	   AS Participation_Rate
+FROM Active_Users au
+LEFT JOIN Battle2 b ON au.UserID = b.UserID AND au.Date = CAST(b.Time as date)
+LEFT JOIN Location_Type lt ON b.LocationID = lt.LocationID
+WHERE lt.Name IS NOT NULL
+GROUP BY au.Date, lt.Name
+
+UNION ALL
+
+SELECT au.Date,
+	   'Quest' AS Category,
+	   CONVERT(DECIMAL(10,2),(SELECT COUNT(DISTINCT UserID) FROM Quest2 WHERE CAST(Time as date) = au.Date) *1.0
+	   / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date)) AS Total,
+	   qt.Name  AS Subcategory, 
+	   CONVERT(DECIMAL(10,2),COUNT(DISTINCT q.UserID) * 1.0 / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date))
+	   AS Participation_Rate
+FROM Active_Users au
+LEFT JOIN Quest2 q ON au.UserID = q.UserID AND au.Date = CAST(q.Time as date)
+JOIN Quest_Type qt ON q.QuestTypeID = qt.QuestTypeID
+GROUP BY au.Date, qt.Name
+
+UNION ALL
+
+SELECT au.Date,
+	   'Summon' AS Category,
+	   CONVERT(DECIMAL(10,2),(SELECT COUNT(DISTINCT UserID) FROM Summon2 WHERE CAST(Time as date) = au.Date) *1.0
+	   / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date)) AS Total,
+	   st.Name  AS Subcategory,
+	   CONVERT(DECIMAL(10,2),COUNT(DISTINCT s.UserID) * 1.0 / (SELECT COUNT(DISTINCT UserID) FROM Active_Users WHERE Date = au.Date))
+	   AS Participation_Rate
+FROM Active_Users au
+LEFT JOIN Summon2 s ON au.UserID = s.UserID AND au.Date = CAST(s.Time as date)
+JOIN Shard_Type st ON s.ShardTypeID = st.ShardTypeID
+GROUP BY au.Date, st.Name
+ORDER BY au.Date
